@@ -22,13 +22,13 @@ if (Test-Path "Releases") {
 
 # 3. Publish UI, Host & Uninstaller projects into the same 'publish' directory
 Write-Host "Publishing PatreonArchiverBridge.UI (App)..." -ForegroundColor Cyan
-dotnet publish PatreonArchiverBridge.UI -c Release -r win-x64 -o publish -p:PublishSingleFile=true --self-contained false --nologo
+dotnet publish PatreonArchiverBridge.UI -c Release -r win-x64 -o publish -p:PublishSingleFile=true -p:Version=$Version --self-contained false --nologo
 
 Write-Host "Publishing PatreonArchiverBridge.Host..." -ForegroundColor Cyan
-dotnet publish PatreonArchiverBridge.Host -c Release -r win-x64 -o publish -p:PublishSingleFile=true --self-contained false --nologo
+dotnet publish PatreonArchiverBridge.Host -c Release -r win-x64 -o publish -p:PublishSingleFile=true -p:Version=$Version --self-contained false --nologo
 
 Write-Host "Publishing PatreonArchiverBridge.Uninstaller..." -ForegroundColor Cyan
-dotnet publish PatreonArchiverBridge.Uninstaller -c Release -r win-x64 -o publish -p:PublishSingleFile=true --self-contained false --nologo
+dotnet publish PatreonArchiverBridge.Uninstaller -c Release -r win-x64 -o publish -p:PublishSingleFile=true -p:Version=$Version --self-contained false --nologo
 
 # 4. Run Velopack Pack on the combined directory
 Write-Host "Packaging version $Version with Velopack..." -ForegroundColor Cyan

@@ -188,6 +188,10 @@ namespace PatreonArchiverBridge.UI
             // Refresh dashboard status
             await RefreshStatusAsync();
 
+            // Set dynamic version string in UI
+            string currentVersion = typeof(MainWindow).Assembly.GetName().Version?.ToString(3) ?? "1.0.0";
+            TxtVersion.Text = $"Bridge Version {currentVersion}";
+
             // Check for app updates
             CheckForAppUpdatesAsync();
         }
