@@ -1,98 +1,165 @@
-# 🎥 Patreon Archiver Bridge
+<div align="center">
 
-[![License](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(64--bit)-lightgrey.svg)](#)
-[![Framework](https://img.shields.io/badge/Framework-.NET%209.0%20WPF-red.svg)](#)
+<img src="assets/banner.svg" alt="Patreon Archiver Bridge" width="100%" />
 
-Patreon Archiver Bridge is the Windows desktop companion for the Patreon Archiver Chrome Extension. It serves as a secure native messaging host, connecting your web browser to a high-performance downloader engine powered by `yt-dlp` and `FFmpeg`. 
+<br />
 
-Designed with modern Windows 11 aesthetics, it offers a seamless background downloading experience with dynamic Mica transparency, real-time status tracking, and automated background updates.
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial--1.0.0-ff5a3c.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D6.svg)](#requirements)
+[![Built with .NET](https://img.shields.io/badge/.NET-9.0-512BD4.svg)](https://dotnet.microsoft.com/)
+[![UI](https://img.shields.io/badge/UI-WPF-2b2b32.svg)](#architecture)
+[![Packaged with Velopack](https://img.shields.io/badge/packaged%20with-Velopack-ff5a3c.svg)](https://velopack.io/)
+[![Latest Release](https://img.shields.io/github/v/release/r1kp/patreon-archiver-bridge?color=ff5a3c)](https://github.com/r1kp/patreon-archiver-bridge/releases/latest)
 
----
+**A lightweight native Windows companion app that lets the Patreon Archiver Chrome extension save files directly to disk.**
 
-## 📸 Preview
+[Download](#installation) · [Features](#features) · [How It Works](#how-it-works) · [Building from Source](#building-from-source) · [Related Projects](#related-projects)
 
-*Below are visual highlights of the Patreon Archiver Bridge interface:*
-
-| **Dashboard (Light Mode)** | **Dashboard (Dark Mode)** |
-|:---:|:---:|
-| ![Dashboard Light](assets/dashboard_light.png) | ![Dashboard Dark](assets/dashboard_dark.png) |
-
-| **Custom Setup Wizard** | **In-App Auto-Updater** |
-|:---:|:---:|
-| ![Setup Wizard](assets/setup_wizard.png) | ![Auto Updater](assets/auto_updater.png) |
-
-*(Note: Replace placeholders in the `assets/` folder with actual screenshots of your running application for a perfect presentation!)*
+</div>
 
 ---
 
-## ✨ Features
+## Table of Contents
 
-- **🚀 Native Browser Integration:** Uses secure Chromium Native Messaging to receive download links directly from the Chrome Extension.
-- **🎨 Windows 11 Aesthetics:** Premium Mica / Acrylic backdrop effects, fluid transitions, and seamless Light/Dark mode themes.
-- **📦 Fully Custom Setup Wizard:** Standalone setup wizard with custom path selection, automatic system check, and clean shortcuts creation.
-- **⚡ Automatic Dependency Management:** Downloads, configures, and caches `yt-dlp` and `FFmpeg` automatically on first start.
-- **🔄 Auto-Updater (Velopack):** Queries your GitHub Releases in the background and applies updates instantly with a gorgeous in-app progress panel.
-- **🧹 Clean Uninstaller:** Removes all binary files, registry configurations, desktop/start menu shortcuts, and logs completely and cleanly.
+- [About](#about)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [How It Works](#how-it-works)
+- [Building from Source](#building-from-source)
+- [Uninstalling](#uninstalling)
+- [Related Projects](#related-projects)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🛠️ How It Works
+## About
 
-The archiver uses a secure three-tier architecture to fetch and save your media files safely:
+Chrome extensions cannot write directly to your file system due to security restrictions. **Patreon Archiver Bridge** is the solution: a small, modern native Windows companion application that runs in the background and handles the actual file downloading and writing on behalf of the [Patreon Archiver](#related-projects) browser extension using Chrome's native messaging API.
 
-```mermaid
-graph TD
-    A[Patreon Web Interface] -->|1. Request Archive| B(Chrome Extension)
-    B -->|2. Native Messaging Protocol| C(PatreonArchiverBridge.Host.exe)
-    C -->|3. IPC Pipes| D[PatreonArchiverBridge.exe Dashboard]
-    D -->|4. Trigger Engine| E(yt-dlp / FFmpeg)
-    E -->|5. Save Media Files| F[Your Selected Download Folder]
+No external Python runtimes, no manual configuration required — just a single, self-contained setup.
+
+---
+
+## Features
+
+- 🪟 **Native WPF Dashboard** — view connection status, active downloads, and media engine statistics at a glance.
+- 🔌 **Native Messaging Bridge** — communicates with the Chrome extension over standard stdio pipes without opening ports.
+- 📦 **Self-Contained Installer** — single executable installer containing all dependencies; runs without requiring a pre-installed .NET runtime on the host PC.
+- 🔄 **Auto-Updates (Velopack)** — the application checks for updates silently in the background and installs them automatically.
+- 🧹 **Clean Uninstaller** — completely removes all binaries, start menu/desktop shortcuts, registry entries, and logs.
+- 🆓 **Free & Open Source** — code is open under a non-commercial license with no telemetry or tracking.
+
+---
+
+## Screenshots
+
+<div align="center">
+
+<img src="assets/screenshot-dashboard.svg" alt="Dashboard" width="49%" />
+<img src="assets/screenshot-setup.svg" alt="Setup wizard" width="49%" />
+
+<sub>Placeholder mockups — will be swapped for real screenshots/GIFs closer to the v1.0.0 release.</sub>
+
+</div>
+
+---
+
+## Installation
+
+1. Download the latest **`PatreonArchiverBridge_setup.exe`** from the [Releases page](https://github.com/r1kp/patreon-archiver-bridge/releases/latest).
+2. Because the installer is freshly compiled and not code-signed yet, Windows SmartScreen will flag the installer. To proceed:
+   - Right-click the downloaded file → **Properties** (Eigenschaften)
+   - Tick the **Unblock** (Zulassen) checkbox at the bottom → **OK**
+   - Run the installer as usual
+3. Choose your preferred installation path and follow the on-screen instructions.
+4. Install the [Patreon Archiver Chrome extension](#related-projects) — it will automatically connect to the Bridge.
+
+> **Note:** The other files attached to the release (`.nupkg`, `.json`, unpackaged `.exe`) are used internally by the auto-updater and don't need to be downloaded manually.
+
+### Requirements
+
+- Windows 10 / 11 (64-bit)
+- Google Chrome
+- [Patreon Archiver Chrome Extension](#related-projects)
+
+---
+
+## How It Works
+
+```
+Chrome Extension  <── native messaging (stdio) ──>  PatreonArchiverBridge.exe  <──>  File System
 ```
 
----
+The extension launches the Bridge via Chrome's native messaging host protocol. The Bridge listens on stdin/stdout, receives archive jobs (file data + destination metadata), downloads and writes them to disk using `yt-dlp` & `FFmpeg`, and reports status back to the extension — all without exposing any network port.
 
-## 📥 Installation
+### Architecture
 
-### 1. Download the Installer
-Click the link below to download the latest setup wizard:
-> **[📥 Download PatreonArchiverBridge_setup.exe (Latest Version)](https://github.com/r1kp/patreon-archiver-bridge/releases/latest/download/PatreonArchiverBridge_setup.exe)**
+| Component | Responsibility |
+|---|---|
+| `PatreonArchiverBridge` | Main WPF app — dashboard UI, native messaging host, file downloader engine |
+| `PatreonArchiverBridge.Setup` | Self-contained custom installer UI, wraps the silent Velopack installer (`-s --installto`) |
+| `PatreonArchiverBridge.Uninstaller` | Cleans up registry entries, shortcuts (with/without spaces), and installation directories |
 
-### 2. Bypass Windows SmartScreen (Unsigned App)
-Since this app is freshly built and not code-signed with a commercial certificate, Windows SmartScreen will display a warning:
-1. Right-click the downloaded `PatreonArchiverBridge_setup.exe`.
-2. Select **Properties** (Eigenschaften).
-3. Under the **General** (Allgemein) tab, check the **"Unblock"** (Zulassen) box at the bottom.
-4. Click **Apply** and then **OK**.
-5. Run the installer and proceed with the glassy setup wizard!
+The setup UI is a thin, fully self-contained WPF wrapper that runs the actual Velopack-generated installer silently in the background, so users get a familiar installation experience without exposing Velopack's default UI.
 
 ---
 
-## 💻 Developer Guide (Building from Source)
+## Building from Source
 
-### Prerequisites
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- PowerShell 5.1+
-
-### Building & Packaging
-To build the binaries, package them with Velopack, and embed them inside the custom installer, simply run the PowerShell packaging pipeline script in the repository root:
+**Prerequisites:** .NET 9.0 SDK, PowerShell
 
 ```powershell
-# Build and package version 1.0.0
-.\pack_app.ps1 -Version 1.0.0
+git clone https://github.com/r1kp/patreon-archiver-bridge.git
+cd patreon-archiver-bridge
+
+# Build and package with Velopack
+Remove-Item -Recurse -Force "Releases" -ErrorAction SilentlyContinue
+powershell -ExecutionPolicy Bypass -File pack_app.ps1 -Version <version>
 ```
 
-This script will:
-1. Publish the UI, Host, and Uninstaller projects.
-2. Package them into a Velopack release folder.
-3. Embed the silent installer into `PatreonArchiverBridge.Setup`.
-4. Compile the custom self-contained Setup Wizard.
-5. Save the final setup executable in `publish\PatreonArchiverBridge_setup.exe`.
+This produces:
+- `publish/PatreonArchiverBridge_setup.exe` — the custom self-contained setup wrapper
+- `Releases/*` — the Velopack release assets (`.nupkg`, `-Setup.exe`, feed metadata) used for auto-updates
 
 ---
 
-## 📄 License
+## Uninstalling
 
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**. You are free to view, modify, and distribute this software for personal and non-commercial purposes. Commercial distribution or usage is strictly prohibited.
+Use **Windows Settings → Apps → Patreon Archiver Bridge → Uninstall**, or run the uninstaller directly from the install directory. It removes all registry entries, shortcuts, and leftover files automatically.
+
+---
+
+## Related Projects
+
+| Project | Description | Status |
+|---|---|---|
+| **[patreon-archiver-extension](https://github.com/r1kp/patreon-archiver-extension)** | The Chrome (Manifest V3) extension this Bridge was built for | 🚧 In development |
+| **patreon-archiver-bridge** *(this repo)* | Native Windows companion app | ✅ Active |
+
+---
+
+## Roadmap
+
+- [ ] Code-signed installer (removing the SmartScreen warning)
+- [ ] Public release of the Chrome extension
+- [ ] Real screenshots and a short demo GIF
+- [ ] v1.0.0 stable release
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. If you run into a bug, please open an issue with your Windows version and, if possible, the console output from running the installer via `cmd`.
+
+---
+
+## License
+
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**. 
+
+You are free to view, copy, modify, and distribute this software for personal and educational purposes. **Commercial use, distribution, or sale of this software (or any modified version of it) is strictly prohibited.**
 
 See the [LICENSE](LICENSE) file for details.
