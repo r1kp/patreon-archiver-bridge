@@ -62,11 +62,7 @@ No external Python runtimes, no manual configuration required — just a single,
 <img src="assets/screenshot-dashboard-dark.jpg" alt="Dashboard Dark Mode" width="49%" />
 <img src="assets/screenshot-dashboard-light.jpg" alt="Dashboard Light Mode" width="49%" />
 
-<br /><br />
-
-<img src="assets/screenshot-setup.png" alt="Setup Wizard" width="60%" />
-
-<sub>Screenshots highlighting the modern Mica and Acrylic UI styling.</sub>
+<sub>Screenshots highlighting the different theme options.</sub>
 
 </div>
 
