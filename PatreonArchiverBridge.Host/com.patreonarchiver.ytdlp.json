@@ -1,0 +1,9 @@
+{
+  "name": "com.patreonarchiver.ytdlp",
+  "description": "Patreon Archiver C# Native Bridge Host",
+  "path": "PatreonArchiverBridge.Host.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://pjbbdkkgldalamlfbdahhhjpppiepbjg/"
+  ]
+}

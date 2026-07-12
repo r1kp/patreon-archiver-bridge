@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>setup_icon.ico</ApplicationIcon>
+    <RollForward>Major</RollForward>
+    <AssemblyName>PatreonArchiverBridge_setup</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PatreonArchiverBridge.Core\PatreonArchiverBridge.Core.csproj" />
+    <ProjectReference Include="..\PatreonArchiverBridge.UI.Shared\PatreonArchiverBridge.UI.Shared.csproj" />
+    <EmbeddedResource Include="velopack_setup.exe" />
+  </ItemGroup>
+
+</Project>

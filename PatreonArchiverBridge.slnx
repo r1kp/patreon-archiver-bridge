@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="PatreonArchiverBridge.Core/PatreonArchiverBridge.Core.csproj" />
+  <Project Path="PatreonArchiverBridge.Host/PatreonArchiverBridge.Host.csproj" />
+  <Project Path="PatreonArchiverBridge.Setup/PatreonArchiverBridge.Setup.csproj" />
+  <Project Path="PatreonArchiverBridge.UI.Shared/PatreonArchiverBridge.UI.Shared.csproj" />
+  <Project Path="PatreonArchiverBridge.UI/PatreonArchiverBridge.UI.csproj" />
+  <Project Path="PatreonArchiverBridge.Uninstaller/PatreonArchiverBridge.Uninstaller.csproj" />
+</Solution>
