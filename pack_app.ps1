@@ -42,7 +42,7 @@ Copy-Item -Path "Releases\PatreonArchiverBridge-win-Setup.exe" -Destination $emb
 # 6. Compile the Custom Setup Wizard (which embeds the Velopack setup)
 Write-Host "Compiling Custom Setup Wizard..." -ForegroundColor Cyan
 if (Test-Path "publish_setup") { Remove-Item -Recurse -Force "publish_setup" }
-dotnet publish PatreonArchiverBridge.Setup -c Release -r win-x64 -o publish_setup -p:PublishSingleFile=true --self-contained false --nologo
+dotnet publish PatreonArchiverBridge.Setup -c Release -r win-x64 -o publish_setup -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true --nologo
 
 # 7. Copy the final Custom Setup Wizard to 'publish' folder
 Copy-Item -Path "publish_setup\PatreonArchiverBridge_setup.exe" -Destination "publish\PatreonArchiverBridge_setup.exe" -Force
