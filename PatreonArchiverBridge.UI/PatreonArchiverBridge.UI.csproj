@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <RollForward>Major</RollForward>
+    <ApplicationIcon>..\PatreonArchiverBridge.UI.Shared\Resources\bridge_icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>PatreonArchiverBridge</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Velopack" Version="1.2.0" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PatreonArchiverBridge.UI.Shared\PatreonArchiverBridge.UI.Shared.csproj" />
+    <ProjectReference Include="..\PatreonArchiverBridge.Core\PatreonArchiverBridge.Core.csproj" />
+  </ItemGroup>
+
+</Project>

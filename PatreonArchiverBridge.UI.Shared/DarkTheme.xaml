@@ -1,0 +1,54 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Dark Theme Colors -->
+    <Color x:Key="BgColor">#D90F1016</Color>
+    <Color x:Key="SidebarBgColor">#B313141C</Color>
+    <Color x:Key="SidebarBorderColor">#1E202E</Color>
+    <Color x:Key="CardBgColor">#CC181922</Color>
+    <Color x:Key="CardBorderColor">#232533</Color>
+    <Color x:Key="TextColor">#F8FAFC</Color>
+    <Color x:Key="TextDimColor">#808F9F</Color>
+    <Color x:Key="IconBgColor">#1E202E</Color>
+    <Color x:Key="IconColor">#94A3B8</Color>
+    
+    <Color x:Key="GreenColor">#10B981</Color>
+    <Color x:Key="GreenBgColor">#1A10B981</Color> <!-- 10% opacity of #10B981 -->
+    <Color x:Key="RedColor">#EF4444</Color>
+    <Color x:Key="RedBgColor">#1AEF4444</Color> <!-- 10% opacity of #EF4444 -->
+    <Color x:Key="YellowColor">#F59E0B</Color>
+    <Color x:Key="YellowBgColor">#1AF59E0B</Color> <!-- 10% opacity of #F59E0B -->
+    
+    <Color x:Key="AccentColor">#FF5A3C</Color>
+    <Color x:Key="AccentHoverColor">#FF7A62</Color>
+    <Color x:Key="AccentGlowColor">#4DFF5A3C</Color> <!-- 30% opacity of #FF5A3C -->
+
+    <Color x:Key="CardHoverShadowColor">#000000</Color>
+    <sys:Double x:Key="CardHoverShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.30</sys:Double>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="BgBrush" Color="{StaticResource BgColor}"/>
+    <SolidColorBrush x:Key="SidebarBgBrush" Color="{StaticResource SidebarBgColor}"/>
+    <SolidColorBrush x:Key="SidebarBorderBrush" Color="{StaticResource SidebarBorderColor}"/>
+    <SolidColorBrush x:Key="CardBgBrush" Color="{StaticResource CardBgColor}"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource CardBorderColor}"/>
+    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+    <SolidColorBrush x:Key="TextDimBrush" Color="{StaticResource TextDimColor}"/>
+    <SolidColorBrush x:Key="IconBgBrush" Color="{StaticResource IconBgColor}"/>
+    <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}"/>
+    
+    <SolidColorBrush x:Key="GreenBrush" Color="{StaticResource GreenColor}"/>
+    <SolidColorBrush x:Key="GreenBgBrush" Color="{StaticResource GreenBgColor}"/>
+    <SolidColorBrush x:Key="RedBrush" Color="{StaticResource RedColor}"/>
+    <SolidColorBrush x:Key="RedBgBrush" Color="{StaticResource RedBgColor}"/>
+    <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}"/>
+    <SolidColorBrush x:Key="YellowBgBrush" Color="{StaticResource YellowBgColor}"/>
+    
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="AccentGlowBrush" Color="{StaticResource AccentGlowColor}"/>
+
+    <SolidColorBrush x:Key="ModalOverlayBrush" Color="#99000000"/>
+    <SolidColorBrush x:Key="ModalBoxBgBrush" Color="#D9181922"/>
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#4A5568"/>
+</ResourceDictionary>
