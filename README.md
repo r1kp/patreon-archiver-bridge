@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="Patreon Archiver Bridge" width="100%" />
+<img src="assets/logo.png" alt="Patreon Archiver Bridge Logo" width="128" height="128" />
 
-<br />
+# Patreon Archiver Bridge
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial--1.0.0-ff5a3c.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D6.svg)](#requirements)
@@ -29,7 +29,8 @@
 - [Building from Source](#building-from-source)
 - [Uninstalling](#uninstalling)
 - [Related Projects](#related-projects)
-- [Roadmap](#roadmap)
+- [Roadmap & Feedback](#roadmap--feedback)
+- [Built with AI (Transparency)](#built-with-ai-transparency)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -45,12 +46,12 @@ No external Python runtimes, no manual configuration required — just a single,
 
 ## Features
 
-- 🪟 **Native WPF Dashboard** — view connection status, active downloads, and media engine statistics at a glance.
-- 🔌 **Native Messaging Bridge** — communicates with the Chrome extension over standard stdio pipes without opening ports.
-- 📦 **Self-Contained Installer** — single executable installer containing all dependencies; runs without requiring a pre-installed .NET runtime on the host PC.
-- 🔄 **Auto-Updates (Velopack)** — the application checks for updates silently in the background and installs them automatically.
-- 🧹 **Clean Uninstaller** — completely removes all binaries, start menu/desktop shortcuts, registry entries, and logs.
-- 🆓 **Free & Open Source** — code is open under a non-commercial license with no telemetry or tracking.
+- **Native WPF Dashboard** — view connection status, active downloads, and media engine statistics at a glance.
+- **Native Messaging Bridge** — communicates with the Chrome extension over standard stdio pipes without opening ports.
+- **Self-Contained Installer** — single executable installer containing all dependencies; runs without requiring a pre-installed .NET runtime on the host PC.
+- **Auto-Updates (Velopack)** — the application checks for updates silently in the background and installs them automatically.
+- **Clean Uninstaller** — completely removes all binaries, start menu/desktop shortcuts, registry entries, and logs.
+- **Free & Open Source** — code is open under a non-commercial license with no telemetry or tracking.
 
 ---
 
@@ -58,10 +59,10 @@ No external Python runtimes, no manual configuration required — just a single,
 
 <div align="center">
 
-<img src="assets/screenshot-dashboard.svg" alt="Dashboard" width="49%" />
-<img src="assets/screenshot-setup.svg" alt="Setup wizard" width="49%" />
+<img src="assets/screenshot-dashboard-dark.png" alt="Dashboard Dark Mode" width="49%" />
+<img src="assets/screenshot-setup.png" alt="Setup Wizard" width="49%" />
 
-<sub>Placeholder mockups — will be swapped for real screenshots/GIFs closer to the v1.0.0 release.</sub>
+<sub>Screenshots highlighting the modern Mica and Acrylic UI styling.</sub>
 
 </div>
 
@@ -70,10 +71,9 @@ No external Python runtimes, no manual configuration required — just a single,
 ## Installation
 
 1. Download the latest **`PatreonArchiverBridge_setup.exe`** from the [Releases page](https://github.com/r1kp/patreon-archiver-bridge/releases/latest).
-2. Because the installer is freshly compiled and not code-signed yet, Windows SmartScreen will flag the installer. To proceed:
-   - Right-click the downloaded file → **Properties** (Eigenschaften)
-   - Tick the **Unblock** (Zulassen) checkbox at the bottom → **OK**
-   - Run the installer as usual
+2. Because the installer is freshly compiled and not code-signed yet, Windows SmartScreen will flag the installer with a "Windows protected your PC" (Der Computer wurde durch Windows geschützt) warning. To proceed:
+   - Click on the **"More info"** (Weitere Informationen) link in the warning text.
+   - Click the **"Run anyway"** (Trotzdem ausführen) button that appears at the bottom.
 3. Choose your preferred installation path and follow the on-screen instructions.
 4. Install the [Patreon Archiver Chrome extension](#related-projects) — it will automatically connect to the Bridge.
 
@@ -141,12 +141,19 @@ Use **Windows Settings → Apps → Patreon Archiver Bridge → Uninstall**, or 
 
 ---
 
-## Roadmap
+## Roadmap & Feedback
 
-- [ ] Code-signed installer (removing the SmartScreen warning)
-- [ ] Public release of the Chrome extension
-- [ ] Real screenshots and a short demo GIF
-- [ ] v1.0.0 stable release
+- We are fully open to your feedback and feature requests!
+- If you would like to request support for new platforms, files, or options, feel free to open a feature request in the issues tab.
+- Feel free to request changes or contribute ideas to improve the downloading or UI flow.
+
+---
+
+## 🤖 Built with AI (Transparency)
+
+I believe in full transparency: this project was created entirely using AI models (vibe coding) with me acting as the project director rather than writing lines of code manually. 
+
+While I do not identify as a traditional developer, I've guided the AI to shape the architecture, design, and user experience of this bridge to be as premium and clean as possible. This approach demonstrates what is possible today with modern AI assistance, and I am proud to share this open-source companion tool with the community!
 
 ---
 
