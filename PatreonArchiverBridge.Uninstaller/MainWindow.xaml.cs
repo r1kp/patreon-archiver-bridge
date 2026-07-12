@@ -438,6 +438,10 @@ if not errorlevel 1 (
     timeout /t 1 /nobreak >nul
     goto loop
 )
+timeout /t 2 /nobreak >nul
+
+set retry=0
+:delete_loop
 if exist ""{systemDir}"" rd /s /q ""{systemDir}""
 ";
             if (cleanAll)
@@ -448,6 +452,14 @@ if exist ""{systemDir}"" rd /s /q ""{systemDir}""
  
             script += $@"if exist ""{_installDir}\current\PatreonArchiverBridge_uninstaller.exe"" del /f /q ""{_installDir}\current\PatreonArchiverBridge_uninstaller.exe""
 if exist ""{_installDir}"" rd /s /q ""{_installDir}""
+
+if exist ""{_installDir}"" (
+    set /a retry+=1
+    if %retry% lss 5 (
+        timeout /t 1 /nobreak >nul
+        goto delete_loop
+    )
+)
 del ""%~f0""
 ";
  
@@ -458,7 +470,8 @@ del ""%~f0""
                 FileName = "cmd.exe",
                 Arguments = $"/c \"\"{cleanupBat}\"\"",
                 CreateNoWindow = true,
-                UseShellExecute = false
+                UseShellExecute = false,
+                WorkingDirectory = tempDir
             };
             Process.Start(psi);
         }
