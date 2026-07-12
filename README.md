@@ -143,17 +143,19 @@ Use **Windows Settings → Apps → Patreon Archiver Bridge → Uninstall**, or 
 
 ## Roadmap & Feedback
 
-- We are fully open to your feedback and feature requests!
+- I am fully open to your feedback and feature requests!
 - If you would like to request support for new platforms, files, or options, feel free to open a feature request in the issues tab.
 - Feel free to request changes or contribute ideas to improve the downloading or UI flow.
 
 ---
 
-## 🤖 Built with AI (Transparency)
+## 🤖 Built with AI & Open Philosophy (Transparency)
 
 I believe in full transparency: this project was created entirely using AI models (vibe coding) with me acting as the project director rather than writing lines of code manually. 
 
 While I do not identify as a traditional developer, I've guided the AI to shape the architecture, design, and user experience of this bridge to be as premium and clean as possible. This approach demonstrates what is possible today with modern AI assistance, and I am proud to share this open-source companion tool with the community!
+
+**My Philosophy:** I use AI assistance to create high-quality applications and browser extensions that are, and will always remain, **completely free of charge for everyone**. My goal is to fight annoying paywalls and locked premium features that plague modern tools, delivering top-tier utilities directly to the community without any cost.
 
 ---
 
