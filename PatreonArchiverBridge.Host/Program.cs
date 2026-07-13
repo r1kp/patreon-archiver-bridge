@@ -152,6 +152,15 @@ namespace PatreonArchiverBridge.Host
                     _ = Task.Run(async () => await CommandHandlers.HandleInstallYtDlpAsync().ConfigureAwait(false));
                     break;
 
+                case "check_file_exists":
+                    string checkPath = msg.GetProperty("path").GetString() ?? "";
+                    CommandHandlers.HandleCheckFileExists(checkPath);
+                    break;
+
+                case "run_update":
+                    CommandHandlers.HandleRunUpdate();
+                    break;
+
                 case "download":
                     string videoUrl = msg.GetProperty("url").GetString() ?? "";
                     string outDir = msg.GetProperty("outputDir").GetString() ?? "";

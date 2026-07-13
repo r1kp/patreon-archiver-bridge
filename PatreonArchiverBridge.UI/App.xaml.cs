@@ -61,6 +61,29 @@ namespace PatreonArchiverBridge.UI
                 return;
             }
 
+            if (e.Args.Length > 0 && e.Args[0] == "--run-update")
+            {
+                // Single Instance check since another instance of UI might be running
+                const string updateMutexName = "Local\\PatreonArchiverBridgeUIUniqueMutexName";
+                _mutex = new Mutex(true, updateMutexName, out bool updateCreatedNew);
+                if (!updateCreatedNew)
+                {
+                    // Bring the existing one to foreground
+                    ActivateExistingInstance();
+                    Shutdown(0);
+                    return;
+                }
+
+                // Apply theme
+                bool updateIsDark = ReadSavedThemePreference();
+                ThemeManager.SetTheme(updateIsDark);
+
+                // Start UpdateProgressWindow directly
+                var progressWindow = new UpdateProgressWindow(null);
+                progressWindow.Show();
+                return;
+            }
+
             // Single Instance check using Mutex
             const string mutexName = "Local\\PatreonArchiverBridgeUIUniqueMutexName";
             _mutex = new Mutex(true, mutexName, out bool createdNew);
