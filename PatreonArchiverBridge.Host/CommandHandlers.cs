@@ -20,10 +20,16 @@ namespace PatreonArchiverBridge.Host
         public static void HandlePing()
         {
             bool ytdlpFound = !string.IsNullOrEmpty(FindYtDlp());
+            string version = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+            if (version.Split('.').Length == 4)
+            {
+                version = version.Substring(0, version.LastIndexOf('.'));
+            }
             Program.SendMessage(new
             {
                 type = "pong",
-                ytdlpFound = ytdlpFound
+                ytdlpFound = ytdlpFound,
+                version = version
             });
         }
 
@@ -100,6 +106,31 @@ namespace PatreonArchiverBridge.Host
                 {
                     type = "write_error",
                     message = ex.Message
+                });
+            }
+        }
+
+        public static void HandleCheckFileExists(string path)
+        {
+            try
+            {
+                bool exists = File.Exists(path);
+                Program.SendMessage(new
+                {
+                    type = "file_exists_result",
+                    path = path,
+                    exists = exists
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "check_file_exists failed");
+                Program.SendMessage(new
+                {
+                    type = "file_exists_result",
+                    path = path,
+                    exists = false,
+                    error = ex.Message
                 });
             }
         }
@@ -362,16 +393,27 @@ namespace PatreonArchiverBridge.Host
             }
         }
 
+        /// <summary>
+        /// Finds the UI executable next to the Host, or one directory up (Squirrel layout).
+        /// </summary>
+        private static string FindUiExe()
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            // Same directory (dev / flat layout)
+            string candidate = Path.Combine(baseDir, "PatreonArchiverBridge.exe");
+            if (File.Exists(candidate)) return candidate;
+            // One level up (Squirrel/Velopack layout: Host.exe is inside \System\, UI is in \current\)
+            string parentDir = Path.GetDirectoryName(baseDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) ?? baseDir;
+            candidate = Path.Combine(parentDir, "PatreonArchiverBridge.exe");
+            if (File.Exists(candidate)) return candidate;
+            throw new Exception($"UI executable not found near '{baseDir}'. Make sure the bridge is properly installed.");
+        }
+
         public static async Task HandlePickFolderAsync()
         {
             try
             {
-                string currentDir = AppDomain.CurrentDomain.BaseDirectory;
-                string uiPath = Path.Combine(currentDir, "PatreonArchiverBridge.UI.exe");
-                if (!File.Exists(uiPath))
-                {
-                    throw new Exception("UI executable not found. Make sure it is installed.");
-                }
+                string uiPath = FindUiExe();
 
                 using var process = new Process();
                 process.StartInfo.FileName = uiPath;
@@ -407,6 +449,36 @@ namespace PatreonArchiverBridge.Host
                 Program.SendMessage(new
                 {
                     type = "folder_pick_error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        public static void HandleRunUpdate()
+        {
+            try
+            {
+                string uiPath = FindUiExe();
+
+                Logger.Log($"Launching UI for update: {uiPath}");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = uiPath,
+                    Arguments = "--run-update",
+                    UseShellExecute = true
+                });
+
+                Program.SendMessage(new
+                {
+                    type = "update_launched"
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "run_update failed");
+                Program.SendMessage(new
+                {
+                    type = "error",
                     message = ex.Message
                 });
             }

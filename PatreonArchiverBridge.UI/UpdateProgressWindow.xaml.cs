@@ -26,7 +26,7 @@ namespace PatreonArchiverBridge.UI
         private const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
         private const int DWMWCP_ROUND = 2;
 
-        private readonly MainWindow _parent;
+        private readonly MainWindow? _parent;
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly DispatcherTimer _funnyTimer;
         private bool _isClosingConfirmed = false;
@@ -46,7 +46,7 @@ namespace PatreonArchiverBridge.UI
         };
         private int _funnyMessageIndex = 0;
 
-        public UpdateProgressWindow(MainWindow parent)
+        public UpdateProgressWindow(MainWindow? parent = null)
         {
             InitializeComponent();
             _parent = parent;
@@ -77,6 +77,22 @@ namespace PatreonArchiverBridge.UI
             catch { }
         }
 
+        private bool ReadThemePreference()
+        {
+            try
+            {
+                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\PatreonArchiverBridge");
+                if (key != null)
+                {
+                    object? val = key.GetValue("ThemeDark");
+                    if (val != null)
+                        return Convert.ToInt32(val) == 1;
+                }
+            }
+            catch { }
+            return false;
+        }
+
         private void UpdateProgressWindow_Loaded(object sender, RoutedEventArgs e)
         {
             var helper = new System.Windows.Interop.WindowInteropHelper(this);
@@ -86,7 +102,7 @@ namespace PatreonArchiverBridge.UI
             DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref cornerPref, sizeof(int));
 
             // Follow parent's theme preference
-            bool isDark = _parent.ReadThemePreference();
+            bool isDark = _parent != null ? _parent.ReadThemePreference() : ReadThemePreference();
             ApplyDwmBackdrop(hwnd, isDark);
 
             // Start update download simulation
@@ -112,7 +128,7 @@ namespace PatreonArchiverBridge.UI
                 var updateInfo = await mgr.CheckForUpdatesAsync().ConfigureAwait(true);
                 if (updateInfo == null || updateInfo.TargetFullRelease == null)
                 {
-                    MessageBox.Show("No update is currently available or download failed.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Everything is already up to date!", "Patreon Archiver", MessageBoxButton.OK, MessageBoxImage.Information);
                     _isClosingConfirmed = true;
                     Close();
                     return;
