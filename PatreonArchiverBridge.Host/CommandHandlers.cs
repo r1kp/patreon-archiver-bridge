@@ -374,6 +374,7 @@ namespace PatreonArchiverBridge.Host
                     }
                 };
 
+                Logger.Log($"Starting yt-dlp: {ytdlp} {process.StartInfo.Arguments}");
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
