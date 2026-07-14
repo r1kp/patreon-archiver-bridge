@@ -436,8 +436,12 @@ namespace PatreonArchiverBridge.Host
 
                 using var process = new Process();
                 process.StartInfo.FileName = ytdlp;
-                process.StartInfo.Arguments = string.Join(" ", args.Select(a => $"\"{a.Replace("\"", "\\\"")}\""));
+                foreach (var arg in args)
+                {
+                    process.StartInfo.ArgumentList.Add(arg);
+                }
                 process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardInput = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.CreateNoWindow = true;
