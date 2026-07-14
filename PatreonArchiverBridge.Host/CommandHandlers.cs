@@ -17,6 +17,9 @@ namespace PatreonArchiverBridge.Host
         public static string? FindFfmpeg() => Core.BridgeCore.FindFfmpeg();
         private static string GetDownloadsFolder() => Core.BridgeCore.GetDownloadsFolder();
 
+        private static string? _cachedYtDlpVersion = null;
+        private static string? _cachedYtDlpPath = null;
+
         public static async Task HandlePingAsync()
         {
             string? ytdlpPath = FindYtDlp();
@@ -25,25 +28,39 @@ namespace PatreonArchiverBridge.Host
 
             if (ytdlpFound)
             {
-                try
+                // Nur EINMAL pro yt-dlp-Pfad wirklich "--version" ausführen und
+                // das Ergebnis cachen. Die Extension pingt die Bridge alle 8
+                // Sekunden im Hintergrund - ohne Cache würde das bei jedem Ping
+                // einen neuen yt-dlp-Prozess starten (sichtbar als kurzes
+                // Aufblitzen im Task-Manager, auch ganz ohne aktiven Download).
+                if (_cachedYtDlpVersion != null && _cachedYtDlpPath == ytdlpPath)
                 {
-                    using var proc = new Process();
-                    proc.StartInfo.FileName = ytdlpPath;
-                    proc.StartInfo.Arguments = "--version";
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.Start();
-                    string output = await proc.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
-                    await proc.WaitForExitAsync().ConfigureAwait(false);
-                    if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(output))
-                    {
-                        version = output.Trim();
-                    }
+                    version = _cachedYtDlpVersion;
                 }
-                catch (Exception ex)
+                else
                 {
-                    Logger.LogException(ex, "yt-dlp --version check failed");
+                    try
+                    {
+                        using var proc = new Process();
+                        proc.StartInfo.FileName = ytdlpPath;
+                        proc.StartInfo.Arguments = "--version";
+                        proc.StartInfo.UseShellExecute = false;
+                        proc.StartInfo.RedirectStandardOutput = true;
+                        proc.StartInfo.CreateNoWindow = true;
+                        proc.Start();
+                        string output = await proc.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
+                        await proc.WaitForExitAsync().ConfigureAwait(false);
+                        if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(output))
+                        {
+                            version = output.Trim();
+                            _cachedYtDlpVersion = version;
+                            _cachedYtDlpPath = ytdlpPath;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogException(ex, "yt-dlp --version check failed");
+                    }
                 }
             }
 
