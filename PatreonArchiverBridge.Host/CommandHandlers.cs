@@ -308,7 +308,11 @@ namespace PatreonArchiverBridge.Host
                     Directory.CreateDirectory(outputDir);
                 }
 
-                string outputPath = Path.Combine(outputDir ?? ".", filenameTemplate);
+                // WICHTIG: Path.Combine fügt auf Windows einen Backslash ein, was das
+                // yt-dlp Dateiname-Template (%(title)s.%(ext)s) bricht. Stattdessen
+                // immer mit Forward-Slash verbinden, damit yt-dlp das Template korrekt parst.
+                string normalizedDir = (outputDir ?? ".").Replace('\\', '/').TrimEnd('/');
+                string outputPath = $"{normalizedDir}/{filenameTemplate}";
 
                 var args = new List<string>
                 {
