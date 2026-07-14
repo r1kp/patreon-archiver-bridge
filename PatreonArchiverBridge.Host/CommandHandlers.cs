@@ -323,6 +323,70 @@ namespace PatreonArchiverBridge.Host
             }
         }
 
+        public static async Task HandleInstallDenoAsync()
+        {
+            string? tempZip = null;
+            try
+            {
+                Program.SendMessage(new { type = "install_progress", message = "Downloading Deno JS engine..." });
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "PatreonArchiverBridge");
+
+                string downloadUrl = "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip";
+
+                string systemDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "System");
+                if (!Directory.Exists(systemDir))
+                {
+                    Directory.CreateDirectory(systemDir);
+                }
+                string targetPath = Path.Combine(systemDir, "deno.exe");
+                tempZip = Path.Combine(Path.GetTempPath(), "deno_temp.zip");
+
+                using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var fileStream = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await contentStream.CopyToAsync(fileStream).ConfigureAwait(false);
+                }
+
+                Program.SendMessage(new { type = "install_progress", message = "Extracting Deno..." });
+
+                System.IO.Compression.ZipFile.ExtractToDirectory(tempZip, systemDir, overwriteFiles: true);
+
+                if (File.Exists(targetPath))
+                {
+                    Program.SendMessage(new
+                    {
+                        type = "install_done",
+                        path = targetPath
+                    });
+                }
+                else
+                {
+                    throw new FileNotFoundException("deno.exe not found after extraction.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "install_deno failed");
+                Program.SendMessage(new
+                {
+                    type = "install_error",
+                    message = ex.Message
+                });
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(tempZip) && File.Exists(tempZip))
+                {
+                    try { File.Delete(tempZip); } catch { }
+                }
+            }
+        }
+
         public static async Task HandleDownloadAsync(string url, string outputDir, string filenameTemplate, string? format)
         {
             try
@@ -355,10 +419,12 @@ namespace PatreonArchiverBridge.Host
                     "-o",
                     outputPath,
                     "--newline",
-                    // Immer bestes Video+Audio herunterladen und als MP4 ausgeben.
-                    // Falls der Aufrufer ein explizites Format übergibt, dieses
-                    // verwenden, sonst den sicheren Standard.
-                    "-f", string.IsNullOrEmpty(format) ? "bestvideo+bestaudio/best" : format,
+                    // Aktiviert Runtimes für YouTube JS-Challenges (n-parameter).
+                    // yt-dlp sucht standardmäßig nur nach deno, hier erlauben wir quickjs als Fallback.
+                    "--js-runtimes", "deno,quickjs",
+                    // Kaskadierender Format-Selektor: Erst bestes Full-HD MP4,
+                    // dann HD 720p MP4, dann Standard MP4, und am Ende Fallbacks.
+                    "-f", string.IsNullOrEmpty(format) ? "bestvideo[height>=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height>=720][ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" : format,
                     "--merge-output-format", "mp4"
                 };
 

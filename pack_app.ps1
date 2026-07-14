@@ -30,6 +30,21 @@ dotnet publish PatreonArchiverBridge.Host -c Release -r win-x64 -o publish -p:Pu
 Write-Host "Publishing PatreonArchiverBridge.Uninstaller..." -ForegroundColor Cyan
 dotnet publish PatreonArchiverBridge.Uninstaller -c Release -r win-x64 -o publish -p:PublishSingleFile=true -p:Version=$Version --self-contained false --nologo
 
+# 3.5. Download and embed QuickJS (qjs.exe)
+Write-Host "Downloading and embedding QuickJS-NG (qjs.exe)..." -ForegroundColor Cyan
+$qjsDir = Join-Path "publish" "System"
+if (-not (Test-Path $qjsDir)) {
+    New-Item -ItemType Directory -Path $qjsDir -Force | Out-Null
+}
+$qjsPath = Join-Path $qjsDir "qjs.exe"
+if (-not (Test-Path $qjsPath)) {
+    $qjsUrl = "https://github.com/quickjs-ng/quickjs/releases/download/v0.15.1/qjs-windows-x86_64.exe"
+    Invoke-WebRequest -Uri $qjsUrl -OutFile $qjsPath -UseBasicParsing
+    Write-Host "QuickJS embedded successfully." -ForegroundColor Green
+} else {
+    Write-Host "QuickJS already exists in publish directory." -ForegroundColor Green
+}
+
 # 4. Run Velopack Pack on the combined directory
 Write-Host "Packaging version $Version with Velopack..." -ForegroundColor Cyan
 vpk pack --packId "PatreonArchiverBridge" --packVersion $Version --packDir "publish" --mainExe "PatreonArchiverBridge.exe"
