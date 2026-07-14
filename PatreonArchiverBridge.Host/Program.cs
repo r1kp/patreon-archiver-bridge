@@ -122,7 +122,12 @@ namespace PatreonArchiverBridge.Host
             switch (action)
             {
                 case "ping":
-                    await CommandHandlers.HandlePingAsync().ConfigureAwait(false);
+                    bool forceCheck = false;
+                    if (msg.TryGetProperty("forceVersionCheck", out var forceProp))
+                    {
+                        forceCheck = forceProp.GetBoolean();
+                    }
+                    await CommandHandlers.HandlePingAsync(forceCheck).ConfigureAwait(false);
                     break;
 
                 case "get_default_dir":
