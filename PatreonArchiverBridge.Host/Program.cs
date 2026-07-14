@@ -167,13 +167,28 @@ namespace PatreonArchiverBridge.Host
                     break;
 
                 case "download":
-                    string videoUrl = msg.GetProperty("url").GetString() ?? "";
-                    string outDir = msg.GetProperty("outputDir").GetString() ?? "";
-                    string fnTemplate = msg.GetProperty("filenameTemplate").GetString() ?? "%(title)s.%(ext)s";
+                    string videoUrl = msg.TryGetProperty("url", out var urlProp) ? urlProp.GetString() ?? "" : "";
+                    string outDir = msg.TryGetProperty("outputDir", out var outDirProp) ? outDirProp.GetString() ?? "" : "";
+                    // TryGetProperty statt GetProperty: ein fehlendes Feld crasht hier nicht
+                    // mehr die komplette Aktion lautlos (GetProperty wirft eine Exception,
+                    // die vorher nur geloggt, aber nie als Fehler an die Extension
+                    // zurückgemeldet wurde - der Download startete dann einfach nie).
+                    string fnTemplate = msg.TryGetProperty("filenameTemplate", out var fnProp)
+                        ? fnProp.GetString() ?? "%(title)s.%(ext)s"
+                        : "%(title)s.%(ext)s";
+                    if (!msg.TryGetProperty("filenameTemplate", out _))
+                    {
+                        Logger.Log("WARNUNG: 'download'-Nachricht enthielt kein filenameTemplate-Feld - Standardwert wird verwendet. Prüfen, ob die Extension es korrekt mitsendet.");
+                    }
                     string? format = null;
                     if (msg.TryGetProperty("options", out var options) && options.TryGetProperty("format", out var formatProp))
                     {
                         format = formatProp.GetString();
+                    }
+                    if (string.IsNullOrEmpty(videoUrl))
+                    {
+                        SendMessage(new { type = "error", message = "download: 'url' fehlt in der Nachricht." });
+                        break;
                     }
                     _ = Task.Run(async () => await CommandHandlers.HandleDownloadAsync(videoUrl, outDir, fnTemplate, format).ConfigureAwait(false));
                     break;
