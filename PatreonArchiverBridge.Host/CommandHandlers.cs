@@ -17,10 +17,7 @@ namespace PatreonArchiverBridge.Host
         public static string? FindFfmpeg() => Core.BridgeCore.FindFfmpeg();
         private static string GetDownloadsFolder() => Core.BridgeCore.GetDownloadsFolder();
 
-        private static string? _cachedYtDlpVersion = null;
-        private static string? _cachedYtDlpPath = null;
-
-        public static async Task HandlePingAsync()
+        public static async Task HandlePingAsync(bool forceVersionCheck = false)
         {
             string? ytdlpPath = FindYtDlp();
             bool ytdlpFound = !string.IsNullOrEmpty(ytdlpPath);
@@ -28,14 +25,25 @@ namespace PatreonArchiverBridge.Host
 
             if (ytdlpFound)
             {
-                // Nur EINMAL pro yt-dlp-Pfad wirklich "--version" ausführen und
-                // das Ergebnis cachen. Die Extension pingt die Bridge alle 8
-                // Sekunden im Hintergrund - ohne Cache würde das bei jedem Ping
-                // einen neuen yt-dlp-Prozess starten (sichtbar als kurzes
-                // Aufblitzen im Task-Manager, auch ganz ohne aktiven Download).
-                if (_cachedYtDlpVersion != null && _cachedYtDlpPath == ytdlpPath)
+                // Versuchen, die Version aus der Registry zu lesen (wir cachen sie dort dauerhaft,
+                // da statische Felder pro Prozess instanziiert werden und Native Messaging bei
+                // jedem Ping einen neuen Prozess startet).
+                string? cachedVersion = null;
+                string? cachedPath = null;
+                try
                 {
-                    version = _cachedYtDlpVersion;
+                    using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\PatreonArchiverBridge");
+                    if (key != null)
+                    {
+                        cachedVersion = key.GetValue("CachedYtDlpVersion") as string;
+                        cachedPath = key.GetValue("CachedYtDlpPath") as string;
+                    }
+                }
+                catch { }
+
+                if (cachedVersion != null && cachedPath == ytdlpPath && !forceVersionCheck)
+                {
+                    version = cachedVersion;
                 }
                 else
                 {
@@ -53,8 +61,18 @@ namespace PatreonArchiverBridge.Host
                         if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(output))
                         {
                             version = output.Trim();
-                            _cachedYtDlpVersion = version;
-                            _cachedYtDlpPath = ytdlpPath;
+                            
+                            // In Registry cachen für zukünftige Pings
+                            try
+                            {
+                                using var key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\PatreonArchiverBridge");
+                                if (key != null)
+                                {
+                                    key.SetValue("CachedYtDlpVersion", version);
+                                    key.SetValue("CachedYtDlpPath", ytdlpPath);
+                                }
+                            }
+                            catch { }
                         }
                     }
                     catch (Exception ex)
@@ -335,7 +353,8 @@ namespace PatreonArchiverBridge.Host
                 {
                     url,
                     "-o",
-                    outputPath
+                    outputPath,
+                    "--newline"
                 };
 
                 if (!string.IsNullOrEmpty(format))
