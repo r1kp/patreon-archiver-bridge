@@ -419,9 +419,8 @@ namespace PatreonArchiverBridge.Host
                     "-o",
                     outputPath,
                     "--newline",
-                    // Aktiviert Runtimes für YouTube JS-Challenges (n-parameter).
-                    // yt-dlp sucht standardmäßig nur nach deno, hier erlauben wir quickjs als Fallback.
-                    "--js-runtimes", "deno,quickjs",
+                    "--js-runtimes", "deno",
+                    "--js-runtimes", "quickjs",
                     // Kaskadierender Format-Selektor: Erst bestes Full-HD MP4,
                     // dann HD 720p MP4, dann Standard MP4, und am Ende Fallbacks.
                     "-f", string.IsNullOrEmpty(format) ? "bestvideo[height>=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height>=720][ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" : format,
