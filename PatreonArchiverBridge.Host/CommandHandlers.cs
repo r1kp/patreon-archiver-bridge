@@ -354,14 +354,13 @@ namespace PatreonArchiverBridge.Host
                     url,
                     "-o",
                     outputPath,
-                    "--newline"
+                    "--newline",
+                    // Immer bestes Video+Audio herunterladen und als MP4 ausgeben.
+                    // Falls der Aufrufer ein explizites Format übergibt, dieses
+                    // verwenden, sonst den sicheren Standard.
+                    "-f", string.IsNullOrEmpty(format) ? "bestvideo+bestaudio/best" : format,
+                    "--merge-output-format", "mp4"
                 };
-
-                if (!string.IsNullOrEmpty(format))
-                {
-                    args.Add("-f");
-                    args.Add(format);
-                }
 
                 string? ffmpeg = FindFfmpeg();
                 if (!string.IsNullOrEmpty(ffmpeg))
@@ -419,7 +418,27 @@ namespace PatreonArchiverBridge.Host
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
+                // Keepalive: Chrome beendet eine Native-Messaging-Verbindung wenn
+                // über ~90s keine Nachrichten ausgetauscht werden. Da yt-dlp für
+                // längere Videos mehrere Minuten braucht, senden wir alle 5s ein
+                // leises keepalive-Paket, um den Verbindungsabbruch zu verhindern.
+                using var keepaliveCts = new System.Threading.CancellationTokenSource();
+                var keepaliveTask = Task.Run(async () =>
+                {
+                    while (!keepaliveCts.Token.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            await Task.Delay(5000, keepaliveCts.Token).ConfigureAwait(false);
+                            Program.SendMessage(new { type = "keepalive" });
+                        }
+                        catch (System.Threading.Tasks.TaskCanceledException) { break; }
+                        catch { break; }
+                    }
+                }, keepaliveCts.Token);
+
                 await process.WaitForExitAsync().ConfigureAwait(false);
+                keepaliveCts.Cancel();
 
                 if (process.ExitCode == 0)
                 {
