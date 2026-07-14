@@ -17,14 +17,36 @@ namespace PatreonArchiverBridge.Host
         public static string? FindFfmpeg() => Core.BridgeCore.FindFfmpeg();
         private static string GetDownloadsFolder() => Core.BridgeCore.GetDownloadsFolder();
 
-        public static void HandlePing()
+        public static async Task HandlePingAsync()
         {
-            bool ytdlpFound = !string.IsNullOrEmpty(FindYtDlp());
-            string version = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
-            if (version.Split('.').Length == 4)
+            string? ytdlpPath = FindYtDlp();
+            bool ytdlpFound = !string.IsNullOrEmpty(ytdlpPath);
+            string version = "unknown";
+
+            if (ytdlpFound)
             {
-                version = version.Substring(0, version.LastIndexOf('.'));
+                try
+                {
+                    using var proc = new Process();
+                    proc.StartInfo.FileName = ytdlpPath;
+                    proc.StartInfo.Arguments = "--version";
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.Start();
+                    string output = await proc.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
+                    await proc.WaitForExitAsync().ConfigureAwait(false);
+                    if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(output))
+                    {
+                        version = output.Trim();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, "yt-dlp --version check failed");
+                }
             }
+
             Program.SendMessage(new
             {
                 type = "pong",
@@ -334,6 +356,16 @@ namespace PatreonArchiverBridge.Host
                 {
                     if (e.Data != null)
                     {
+                        // yt-dlp schreibt seine Fortschrittszeilen (Prozent, Speed, ETA)
+                        // standardmäßig nach stderr, nicht stdout - ohne das hier kam bei
+                        // der Extension während des gesamten Downloads nie eine einzige
+                        // Zwischenmeldung an, obwohl yt-dlp im Hintergrund korrekt lief.
+                        Program.SendMessage(new
+                        {
+                            type = "progress",
+                            line = e.Data
+                        });
+
                         Logger.Log($"[yt-dlp stderr] {e.Data}");
                         lock (stderrLines)
                         {
@@ -402,7 +434,7 @@ namespace PatreonArchiverBridge.Host
             // Same directory (dev / flat layout)
             string candidate = Path.Combine(baseDir, "PatreonArchiverBridge.exe");
             if (File.Exists(candidate)) return candidate;
-            // One level up (Squirrel/Velopack layout: Host.exe is inside \System\, UI is in \current\)
+            // One level up (Squirrel/Velopack layout: Host.exe is inside \\System\\, UI is in \\current\\)
             string parentDir = Path.GetDirectoryName(baseDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) ?? baseDir;
             candidate = Path.Combine(parentDir, "PatreonArchiverBridge.exe");
             if (File.Exists(candidate)) return candidate;

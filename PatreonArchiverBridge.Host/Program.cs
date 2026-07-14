@@ -122,7 +122,7 @@ namespace PatreonArchiverBridge.Host
             switch (action)
             {
                 case "ping":
-                    CommandHandlers.HandlePing();
+                    await CommandHandlers.HandlePingAsync().ConfigureAwait(false);
                     break;
 
                 case "get_default_dir":
