@@ -157,6 +157,10 @@ namespace PatreonArchiverBridge.Host
                     _ = Task.Run(async () => await CommandHandlers.HandleInstallYtDlpAsync().ConfigureAwait(false));
                     break;
 
+                case "install_deno":
+                    _ = Task.Run(async () => await CommandHandlers.HandleInstallDenoAsync().ConfigureAwait(false));
+                    break;
+
                 case "check_file_exists":
                     string checkPath = msg.GetProperty("path").GetString() ?? "";
                     CommandHandlers.HandleCheckFileExists(checkPath);
