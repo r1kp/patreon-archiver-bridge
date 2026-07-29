@@ -20,6 +20,16 @@
     </Style>
 
     <!-- Card Style (Static) -->
+    <!-- RenderingBias: bewusst "Performance" statt "Quality" (galt frueher fuer
+         ALLE Schatten hier). Ein Effect zwingt WPF, das Element samt Unterbaum in
+         eine eigene Zwischen-Renderflaeche zu zeichnen und den Gauss-Blur bei
+         JEDER Neudarstellung zu rastern - also in jedem Frame, solange gescrollt
+         wird. "Quality" verbietet dabei ausdruecklich die guenstigere Rasterung
+         mit reduzierter Aufloesung. Im Setup-Fenster liegen allein auf den
+         scrollbaren Seiten sieben solcher Karten (MainWindow.xaml 211/220/240/
+         264/304/320/336). Bei Deckkraeften von 2-3% ist der Unterschied
+         zwischen Quality und Performance nicht wahrnehmbar, die Ersparnis
+         waehrend des Scrollens dagegen schon. -->
     <Style x:Key="CardStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource CardBgBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
@@ -28,7 +38,7 @@
         <Setter Property="Padding" Value="20"/>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect BlurRadius="15" ShadowDepth="1" Color="#000000" Opacity="0.03" RenderingBias="Quality"/>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="1" Color="#000000" Opacity="0.03" RenderingBias="Performance"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -46,7 +56,7 @@
         </Setter>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect BlurRadius="6" ShadowDepth="1" Color="#000000" Opacity="0.02" RenderingBias="Quality"/>
+                <DropShadowEffect BlurRadius="6" ShadowDepth="1" Color="#000000" Opacity="0.02" RenderingBias="Performance"/>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
@@ -62,7 +72,7 @@
                         <DropShadowEffect BlurRadius="12" ShadowDepth="3" 
                                           Color="{DynamicResource CardHoverShadowColor}" 
                                           Opacity="{DynamicResource CardHoverShadowOpacity}" 
-                                          RenderingBias="Quality"/>
+                                          RenderingBias="Performance"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -95,7 +105,7 @@
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource AccentHoverBrush}"/>
                             <Setter TargetName="border" Property="Effect">
                                 <Setter.Value>
-                                    <DropShadowEffect Color="#ff5a3c" BlurRadius="8" Opacity="0.2" ShadowDepth="3" RenderingBias="Quality"/>
+                                    <DropShadowEffect Color="#ff5a3c" BlurRadius="8" Opacity="0.2" ShadowDepth="3" RenderingBias="Performance"/>
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
@@ -145,9 +155,7 @@
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource CardBgBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
-                            <Setter TargetName="border" Property="BorderBrush" Value="#E2E8F0"/>
-                            <Setter Property="Foreground" Value="#94A3B8"/>
+                            <Setter TargetName="border" Property="Opacity" Value="0.35"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -187,7 +195,7 @@
                                     <DropShadowEffect BlurRadius="8" ShadowDepth="2" 
                                                       Color="{DynamicResource CardHoverShadowColor}" 
                                                       Opacity="{DynamicResource CardHoverShadowOpacity}" 
-                                                      RenderingBias="Quality"/>
+                                                      RenderingBias="Performance"/>
                                 </Setter.Value>
                             </Setter>
                         </Trigger>

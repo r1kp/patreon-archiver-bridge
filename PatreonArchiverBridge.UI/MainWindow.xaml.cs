@@ -588,6 +588,7 @@ namespace PatreonArchiverBridge.UI
 
         private void BtnSettingsOpen_Click(object sender, RoutedEventArgs e)
         {
+            RefreshDenoSettingsStatus();
             SettingsOverlay.Visibility = Visibility.Visible;
 
             var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
@@ -1067,6 +1068,109 @@ namespace PatreonArchiverBridge.UI
         public static void LogError(string context, Exception ex)
         {
             LogException(context, ex);
+        }
+
+        private bool HasDeno()
+        {
+            try
+            {
+                string systemDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "System");
+                string denoPath = Path.Combine(systemDir, "deno.exe");
+                if (File.Exists(denoPath)) return true;
+
+                string? pathVar = Environment.GetEnvironmentVariable("PATH");
+                if (!string.IsNullOrEmpty(pathVar))
+                {
+                    foreach (string dir in pathVar.Split(';', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        try
+                        {
+                            string fullPath = Path.Combine(dir.Trim(), "deno.exe");
+                            if (File.Exists(fullPath)) return true;
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        private void RefreshDenoSettingsStatus()
+        {
+            bool hasDeno = HasDeno();
+            if (hasDeno)
+            {
+                TxtDeno.Text = "Deno JS engine is installed.";
+                BtnDenoAction.Content = "Installed";
+                BtnDenoAction.IsEnabled = false;
+                BtnDenoAction.Visibility = Visibility.Visible;
+                ProgressDeno.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TxtDeno.Text = "Deno runtime for solving video signature challenges.";
+                BtnDenoAction.Content = "Install";
+                BtnDenoAction.IsEnabled = true;
+                BtnDenoAction.Visibility = Visibility.Visible;
+                ProgressDeno.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void BtnDenoAction_Click(object sender, RoutedEventArgs e)
+        {
+            string systemDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "System");
+            if (!Directory.Exists(systemDir))
+            {
+                Directory.CreateDirectory(systemDir);
+            }
+            string denoUrl = "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip";
+            string tempZip = Path.Combine(Path.GetTempPath(), "deno_temp.zip");
+
+            TxtDeno.Text = "Downloading Deno JS engine zip...";
+            await DownloadWithProgressAsync(denoUrl, tempZip, ProgressDeno, BtnDenoAction, () => {
+                try
+                {
+                    LogInfo("Beginning Deno extraction...");
+                    TxtDeno.Text = "Extracting Deno runtime...";
+                    using (var archive = System.IO.Compression.ZipFile.OpenRead(tempZip))
+                    {
+                        foreach (var entry in archive.Entries)
+                        {
+                            if (entry.FullName.EndsWith("deno.exe", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string dest = Path.Combine(systemDir, Path.GetFileName(entry.FullName));
+                                LogInfo($"Extracting {entry.FullName} -> {dest}");
+                                entry.ExtractToFile(dest, true);
+                            }
+                        }
+                    }
+                    LogInfo("Deno extraction completed successfully.");
+                    TxtDeno.Text = "Deno JS engine installed successfully.";
+                    BtnDenoAction.Content = "Installed";
+                    BtnDenoAction.IsEnabled = false;
+                    
+                    // Refresh status header
+                    _ = RefreshStatusAsync();
+                    ShowNotification("Deno runtime successfully installed!");
+                }
+                catch (Exception ex)
+                {
+                    LogException("Deno Extraction", ex);
+                    MessageBox.Show($"Deno extraction failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TxtDeno.Text = "Deno installation failed.";
+                    BtnDenoAction.Content = "Install";
+                    BtnDenoAction.IsEnabled = true;
+                }
+                finally
+                {
+                    try
+                    {
+                        if (File.Exists(tempZip)) File.Delete(tempZip);
+                    }
+                    catch { }
+                }
+            });
         }
 
         private static void CleanupOldLogs(string logDir)

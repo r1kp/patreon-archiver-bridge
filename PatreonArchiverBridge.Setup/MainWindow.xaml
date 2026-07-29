@@ -296,8 +296,8 @@
                             <StackPanel Margin="0,0,12,0">
                                 <!-- Page Header inside scrollable area -->
                                 <StackPanel Margin="0,32,0,16">
-                                    <TextBlock Text="Extra Components" Style="{StaticResource BaseTextBlockStyle}" FontWeight="Bold" FontSize="22" Margin="0,0,0,4"/>
-                                    <TextBlock Text="Select optional components to download and include." Style="{StaticResource BaseTextBlockStyle}" FontSize="13.5" Foreground="{DynamicResource TextDimBrush}"/>
+                                    <TextBlock Text="Video &amp; Media Support" Style="{StaticResource BaseTextBlockStyle}" FontWeight="Bold" FontSize="22" Margin="0,0,0,4"/>
+                                    <TextBlock Text="These optional components enable downloading embedded videos from YouTube, Vimeo, and custom video hosts. All other features (cloud storage links, direct Patreon attachments, audio, text, and custom download locations) work out of the box without them." Style="{StaticResource BaseTextBlockStyle}" FontSize="13.5" Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Card 1: yt-dlp -->
@@ -309,9 +309,9 @@
                                         </Grid.ColumnDefinitions>
                                         <CheckBox x:Name="ChkYtdlp" Grid.Column="0" Style="{StaticResource CheckboxStyle}" IsChecked="True" VerticalAlignment="Center" Margin="0,0,16,0" Click="ChkYtdlp_Click"/>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock x:Name="TxtYtdlpTitle" Text="yt-dlp video engine (Required for videos)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
-                                            <TextBlock Text="Open-source engine used to retrieve embedded videos (YouTube/Vimeo) locked inside posts." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
-                                            <TextBlock x:Name="TxtWarnYtdlp" Text="⚠ Recommended for the extension to work" Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="TxtYtdlpTitle" Text="yt-dlp video engine (required for embedded videos)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="Open-source engine used to retrieve videos that are embedded from YouTube or Vimeo inside a post." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="TxtWarnYtdlp" Text="⚠ Without this, embedded YouTube/Vimeo videos cannot be downloaded. Everything else keeps working." Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -325,9 +325,9 @@
                                         </Grid.ColumnDefinitions>
                                         <CheckBox x:Name="ChkFfmpeg" Grid.Column="0" Style="{StaticResource CheckboxStyle}" IsChecked="True" VerticalAlignment="Center" Margin="0,0,16,0" Click="ChkFfmpeg_Click"/>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock x:Name="TxtFfmpegTitle" Text="ffmpeg and ffprobe (Required for merging)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
-                                            <TextBlock Text="Required for merging separate video and audio streams, as well as post-processing tasks." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
-                                            <TextBlock x:Name="TxtWarnFfmpeg" Text="⚠ Recommended for the extension to work" Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="TxtFfmpegTitle" Text="ffmpeg and ffprobe (required for merging)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="YouTube/Vimeo deliver video and audio as separate streams - these tools merge them into one playable file." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="TxtWarnFfmpeg" Text="⚠ Without this, embedded videos may end up without sound or fail to merge." Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -341,9 +341,9 @@
                                         </Grid.ColumnDefinitions>
                                         <CheckBox x:Name="ChkYtdlpejs" Grid.Column="0" Style="{StaticResource CheckboxStyle}" IsChecked="True" VerticalAlignment="Center" Margin="0,0,16,0" Click="ChkYtdlpejs_Click"/>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock x:Name="TxtYtdlpejsTitle" Text="yt-dlp-ejs (Required for YouTube support)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
-                                            <TextBlock Text="Python wheel package providing YouTube decipher decryption solvers." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
-                                            <TextBlock x:Name="TxtWarnYtdlpejs" Text="⚠ Recommended for the extension to work" Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="TxtYtdlpejsTitle" Text="yt-dlp-ejs (required for YouTube)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="Solver package that yt-dlp needs to unlock YouTube's protected video streams." Style="{StaticResource BaseTextBlockStyle}" FontSize="11.5" Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="TxtWarnYtdlpejs" Text="⚠ Without this, most YouTube videos will fail to download." Style="{StaticResource BaseTextBlockStyle}" FontSize="11" Foreground="#EF4444" FontWeight="Medium" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MegaApiClient" Version="1.10.4" />
     <ProjectReference Include="..\PatreonArchiverBridge.Core\PatreonArchiverBridge.Core.csproj" />
   </ItemGroup>
 

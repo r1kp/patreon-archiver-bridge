@@ -190,6 +190,17 @@ Noncommercial License 1.0.0 linked above.";
                 }
                 if (bestFrame != null)
                 {
+                    // Einfrieren: ein nicht eingefrorenes BitmapSource haengt an der
+                    // Change-Notification-Maschinerie und wird bei jeder Neudarstellung
+                    // erneut auf Aenderungen geprueft. Rein technisch, optisch identisch.
+                    // (Hinweis fuer spaeter: hier wird bewusst der GROESSTE Frame der
+                    // .ico genommen - meist 256px - und im Layout auf 26x26 verkleinert,
+                    // siehe MainWindow.xaml. Mit BitmapScalingMode="HighQuality" ist das
+                    // pro Neudarstellung ein teurer Fant-Downscale. Ein Frame um die
+                    // 64px waere fuer diese Anzeigegroesse guenstiger UND schaerfer -
+                    // bewusst nicht mitgeaendert, weil es das Logo minimal anders
+                    // aussehen lassen kann.)
+                    if (bestFrame.CanFreeze) bestFrame.Freeze();
                     ImgLogo.Source = bestFrame;
                 }
             }

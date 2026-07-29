@@ -38,20 +38,20 @@
 
 ## About
 
-Chrome extensions cannot write directly to your file system due to security restrictions. **Patreon Archiver Bridge** is the solution: a small, modern native Windows companion application that runs in the background and handles the actual file downloading and writing on behalf of the [Patreon Archiver](#related-projects) browser extension using Chrome's native messaging API.
+Chrome extensions cannot write directly to your file system due to security restrictions. **Patreon Archiver Bridge** is the solution: a small, modern native Windows companion application that runs in the background and handles the actual file downloading and writing on behalf of the [Patreon Archiver Chrome Extension](https://github.com/r1kp/patreon-archiver-extension) using Chrome's native messaging API.
 
-No external Python runtimes, no manual configuration required — just a single, self-contained setup.
+No external Python runtimes, no manual configuration required, just a single, self-contained setup.
 
 ---
 
 ## Features
 
-- **Native WPF Dashboard** — view connection status, active downloads, and media engine statistics at a glance.
-- **Native Messaging Bridge** — communicates with the Chrome extension over standard stdio pipes without opening ports.
-- **Self-Contained Installer** — single executable installer containing all dependencies; runs without requiring a pre-installed .NET runtime on the host PC.
-- **Auto-Updates (Velopack)** — the application checks for updates silently in the background and installs them automatically.
-- **Clean Uninstaller** — completely removes all binaries, start menu/desktop shortcuts, registry entries, and logs.
-- **Free & Open Source** — code is open under a non-commercial license with no telemetry or tracking.
+- **Native WPF Dashboard:** view connection status, active downloads, and media engine statistics at a glance.
+- **Native Messaging Bridge:** communicates with the Chrome extension over standard stdio pipes without opening ports.
+- **Self-Contained Installer:** single executable installer containing all dependencies; runs without requiring a pre-installed .NET runtime on the host PC.
+- **Auto-Updates (Velopack):** the application checks for updates silently in the background and installs them automatically.
+- **Clean Uninstaller:** completely removes all binaries, start menu/desktop shortcuts, registry entries, and logs.
+- **Free & Open Source:** code is open under a non-commercial license with no telemetry or tracking.
 
 ---
 
@@ -75,7 +75,7 @@ No external Python runtimes, no manual configuration required — just a single,
    - Click on the **"More info"** (Weitere Informationen) link in the warning text.
    - Click the **"Run anyway"** (Trotzdem ausführen) button that appears at the bottom.
 3. Choose your preferred installation path and follow the on-screen instructions.
-4. Install the [Patreon Archiver Chrome extension](#related-projects) — it will automatically connect to the Bridge.
+4. Install the [Patreon Archiver Chrome extension](https://github.com/r1kp/patreon-archiver-extension); it will automatically connect to the Bridge.
 
 > **Note:** The other files attached to the release (`.nupkg`, `.json`, unpackaged `.exe`) are used internally by the auto-updater and don't need to be downloaded manually.
 
@@ -83,7 +83,7 @@ No external Python runtimes, no manual configuration required — just a single,
 
 - Windows 10 / 11 (64-bit)
 - Google Chrome
-- [Patreon Archiver Chrome Extension](#related-projects)
+- [Patreon Archiver Chrome Extension](https://github.com/r1kp/patreon-archiver-extension)
 
 ---
 
@@ -93,13 +93,13 @@ No external Python runtimes, no manual configuration required — just a single,
 Chrome Extension  <── native messaging (stdio) ──>  PatreonArchiverBridge.exe  <──>  File System
 ```
 
-The extension launches the Bridge via Chrome's native messaging host protocol. The Bridge listens on stdin/stdout, receives archive jobs (file data + destination metadata), downloads and writes them to disk using `yt-dlp` & `FFmpeg`, and reports status back to the extension — all without exposing any network port.
+The extension launches the Bridge via Chrome's native messaging host protocol. The Bridge listens on stdin/stdout, receives archive jobs (file data + destination metadata), downloads and writes them to disk using `yt-dlp` & `FFmpeg`, and reports status back to the extension, all without exposing any network port.
 
 ### Architecture
 
 | Component | Responsibility |
 |---|---|
-| `PatreonArchiverBridge` | Main WPF app — dashboard UI, native messaging host, file downloader engine |
+| `PatreonArchiverBridge` | Main WPF app: dashboard UI, native messaging host, file downloader engine |
 | `PatreonArchiverBridge.Setup` | Self-contained custom installer UI, wraps the silent Velopack installer (`-s --installto`) |
 | `PatreonArchiverBridge.Uninstaller` | Cleans up registry entries, shortcuts (with/without spaces), and installation directories |
 
@@ -121,8 +121,8 @@ powershell -ExecutionPolicy Bypass -File pack_app.ps1 -Version <version>
 ```
 
 This produces:
-- `publish/PatreonArchiverBridge_setup.exe` — the custom self-contained setup wrapper
-- `Releases/*` — the Velopack release assets (`.nupkg`, `-Setup.exe`, feed metadata) used for auto-updates
+- `publish/PatreonArchiverBridge_setup.exe`: the custom self-contained setup wrapper
+- `Releases/*`: the Velopack release assets (`.nupkg`, `-Setup.exe`, feed metadata) used for auto-updates
 
 ---
 
@@ -136,8 +136,8 @@ Use **Windows Settings → Apps → Patreon Archiver Bridge → Uninstall**, or 
 
 | Project | Description | Status |
 |---|---|---|
-| **[patreon-archiver-extension](https://github.com/r1kp/patreon-archiver-extension)** | The Chrome (Manifest V3) extension this Bridge was built for | 🚧 In development |
-| **patreon-archiver-bridge** *(this repo)* | Native Windows companion app | ✅ Active |
+| **[patreon-archiver-extension](https://github.com/r1kp/patreon-archiver-extension)** | The Chrome (Manifest V3) extension that scans Patreon posts, extracts media & cloud links, and interfaces with this Bridge | ✅ Available & Active |
+| **[patreon-archiver-bridge](https://github.com/r1kp/patreon-archiver-bridge)** *(this repo)* | Native Windows companion app for direct file saving & 1080p/4K video downloads | ✅ Available & Active |
 
 ---
 
@@ -151,7 +151,7 @@ Use **Windows Settings → Apps → Patreon Archiver Bridge → Uninstall**, or 
 
 ## 🤖 Built with AI & Open Philosophy (Transparency)
 
-I believe in full transparency: this project was created entirely using AI models (vibe coding) with me acting as the project director rather than writing lines of code manually. 
+I believe in full transparency: this project was created entirely using AI models (vibe coding) with me acting as the project director rather than writing lines of code manually.
 
 While I do not identify as a traditional developer, I've guided the AI to shape the architecture, design, and user experience of this bridge to be as premium and clean as possible. This approach demonstrates what is possible today with modern AI assistance, and I am proud to share this open-source companion tool with the community!
 
@@ -167,7 +167,7 @@ Issues and pull requests are welcome. If you run into a bug, please open an issu
 
 ## License
 
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**. 
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
 
 You are free to view, copy, modify, and distribute this software for personal and educational purposes. **Commercial use, distribution, or sale of this software (or any modified version of it) is strictly prohibited.**
 

@@ -139,9 +139,8 @@ namespace PatreonArchiverBridge.Core
             }
             catch { }
 
-            // Default fallback: <Downloads>/Patreon Archiver
-            string downloads = GetDownloadsFolder();
-            return Path.Combine(downloads, "Patreon Archiver");
+            // Default fallback: <Downloads>
+            return GetDownloadsFolder();
         }
 
         public static async Task<string> GetYtdlpVersionAsync(string path)

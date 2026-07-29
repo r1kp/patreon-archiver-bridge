@@ -114,6 +114,15 @@ namespace PatreonArchiverBridge.Host
             {
                 Logger.LogException(ex, "Error in Native Messaging loop");
             }
+            finally
+            {
+                // Verbindung ist zu (Chrome hat den Port getrennt = Abbruch durch
+                // den Nutzer, oder normales Ende). Noch laufende Kindprozesse -
+                // vor allem yt-dlp - MUESSEN hier sterben: Windows beendet
+                // Kindprozesse nicht automatisch mit, yt-dlp lief sonst weiter,
+                // schrieb weiter in seine ".part"-Datei und liess sie liegen.
+                CommandHandlers.KillChildProcesses();
+            }
         }
 
         private static async Task DispatchActionAsync(string? action, JsonElement msg)
@@ -153,6 +162,12 @@ namespace PatreonArchiverBridge.Host
                     _ = Task.Run(async () => await CommandHandlers.HandleDownloadUrlAsync(dlUrl, dlPath, requestId).ConfigureAwait(false));
                     break;
 
+                case "get_url_size":
+                    string sizeUrl = msg.GetProperty("url").GetString() ?? "";
+                    string sizeRequestId = msg.GetProperty("requestId").GetString() ?? "";
+                    _ = Task.Run(async () => await CommandHandlers.HandleGetUrlSizeAsync(sizeUrl, sizeRequestId).ConfigureAwait(false));
+                    break;
+
                 case "install_ytdlp":
                     _ = Task.Run(async () => await CommandHandlers.HandleInstallYtDlpAsync().ConfigureAwait(false));
                     break;
@@ -166,9 +181,21 @@ namespace PatreonArchiverBridge.Host
                     CommandHandlers.HandleCheckFileExists(checkPath);
                     break;
 
+                case "move_local_file":
+                    string moveSource = msg.GetProperty("sourcePath").GetString() ?? "";
+                    string moveTarget = msg.GetProperty("targetPath").GetString() ?? "";
+                    CommandHandlers.HandleMoveLocalFile(moveSource, moveTarget);
+                    break;
+
+                case "delete_directory":
+                    string delDirPath = msg.GetProperty("path").GetString() ?? "";
+                    CommandHandlers.HandleDeleteDirectory(delDirPath);
+                    break;
+
                 case "run_update":
                     CommandHandlers.HandleRunUpdate();
                     break;
+
 
                 case "download":
                     string videoUrl = msg.TryGetProperty("url", out var urlProp) ? urlProp.GetString() ?? "" : "";
@@ -185,16 +212,50 @@ namespace PatreonArchiverBridge.Host
                         Logger.Log("WARNUNG: 'download'-Nachricht enthielt kein filenameTemplate-Feld - Standardwert wird verwendet. Prüfen, ob die Extension es korrekt mitsendet.");
                     }
                     string? format = null;
-                    if (msg.TryGetProperty("options", out var options) && options.TryGetProperty("format", out var formatProp))
+                    bool forceOverwrite = false;
+                    if (msg.TryGetProperty("options", out var options))
                     {
-                        format = formatProp.GetString();
+                        if (options.TryGetProperty("format", out var formatProp))
+                        {
+                            format = formatProp.GetString();
+                        }
+                        if (options.TryGetProperty("forceOverwrite", out var forceOverwriteProp))
+                        {
+                            forceOverwrite = forceOverwriteProp.GetBoolean();
+                        }
                     }
                     if (string.IsNullOrEmpty(videoUrl))
                     {
                         SendMessage(new { type = "error", message = "download: 'url' fehlt in der Nachricht." });
                         break;
                     }
-                    _ = Task.Run(async () => await CommandHandlers.HandleDownloadAsync(videoUrl, outDir, fnTemplate, format).ConfigureAwait(false));
+                    _ = Task.Run(async () => await CommandHandlers.HandleDownloadAsync(videoUrl, outDir, fnTemplate, format, forceOverwrite).ConfigureAwait(false));
+                    break;
+
+                case "log_entry":
+                    {
+                        // Fire-and-forget: nur wegschreiben, keine Antwort senden.
+                        string lvl = msg.TryGetProperty("level", out var lvlProp) ? lvlProp.GetString() ?? "info" : "info";
+                        string text = msg.TryGetProperty("message", out var txtProp) ? txtProp.GetString() ?? "" : "";
+                        string src = msg.TryGetProperty("source", out var srcProp) ? srcProp.GetString() ?? "" : "";
+                        CommandHandlers.HandleLogEntry(lvl, text, src);
+                    }
+                    break;
+
+                case "get_logs":
+                    {
+                        string logsReq = msg.TryGetProperty("requestId", out var lrProp) ? lrProp.GetString() ?? "" : "";
+                        CommandHandlers.HandleGetLogs(logsReq);
+                    }
+                    break;
+
+                case "cleanup_partial":
+                    {
+                        string cleanDir = msg.TryGetProperty("dir", out var cdProp) ? cdProp.GetString() ?? "" : "";
+                        string cleanBase = msg.TryGetProperty("baseName", out var cbProp) ? cbProp.GetString() ?? "" : "";
+                        string cleanReq = msg.TryGetProperty("requestId", out var crProp) ? crProp.GetString() ?? "" : "";
+                        CommandHandlers.HandleCleanupPartial(cleanDir, cleanBase, cleanReq);
+                    }
                     break;
 
                 default:
